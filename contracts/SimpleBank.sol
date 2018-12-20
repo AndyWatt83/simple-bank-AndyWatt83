@@ -33,7 +33,7 @@ contract SimpleBank {
 
     /* Create an event called LogWithdrawal */
     /* Add 3 arguments for this event, an accountAddress, withdrawAmount and a newBalance */
-    event LogWithdrawal(address indexed accountAddress, uint indexed amount, uint indexed newBalance);
+    event LogWithdrawal(address indexed accountAddress, uint indexed withdrawAmount, uint indexed newBalance);
 
     //
     // Functions
@@ -57,6 +57,9 @@ contract SimpleBank {
     /// @return The users enrolled status
     // Emit the appropriate event
     function enroll() public returns (bool){
+        enrolled[msg.sender] = true;
+        balances[msg.sender] = 0;
+        return true;
     }
 
     /// @notice Deposit ether into bank
@@ -64,9 +67,13 @@ contract SimpleBank {
     // Add the appropriate keyword so that this function can receive ether
     // Use the appropriate global variables to get the transaction sender and value
     // Emit the appropriate event
-    function deposit() public returns (uint) {
+    function deposit() payable public returns (uint) {
         /* Add the amount to the user's balance, call the event associated with a deposit,
-          then return the balance of the user */
+            then return the balance of the user */
+        require(enrolled[msg.sender], "");
+        balances[msg.sender] += msg.value;
+        emit LogDepositMade(msg.sender, msg.value);
+        return balances[msg.sender];
     }
 
     /// @notice Withdraw ether from bank
@@ -79,6 +86,12 @@ contract SimpleBank {
             Subtract the amount from the sender's balance, and try to send that amount of ether
             to the user attempting to withdraw.
             return the user's balance.*/
+        require(enrolled[msg.sender], "");
+        require(balances[msg.sender] >= withdrawAmount, "Insufficient Funds");
+        balances[msg.sender] -= withdrawAmount;
+        msg.sender.transfer(withdrawAmount);
+        emit LogWithdrawal(msg.sender, withdrawAmount, balances[msg.sender]);
+        return balances[msg.sender];
     }
 
     // Fallback function - Called if other functions don't match call or
