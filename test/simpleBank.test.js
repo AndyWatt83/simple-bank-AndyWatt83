@@ -11,12 +11,12 @@ var SimpleBank = artifacts.require("./SimpleBank.sol");
 
 contract('SimpleBank', function(accounts) {
 
-  const owner = accounts[0]
-  const alice = accounts[1];
-  const bob = accounts[2];
-  const deposit = web3.utils.toBN(2);
+    const owner = accounts[0]
+    const alice = accounts[1];
+    const bob = accounts[2];
+    const deposit = web3.utils.toBN(2);
 
-  it("mark addresses as enrolled", async () => {
+    it("mark addresses as enrolled", async () => {
     const bank = await SimpleBank.deployed();
 
     await bank.enroll({from: alice});
@@ -26,9 +26,9 @@ contract('SimpleBank', function(accounts) {
 
     const ownerEnrolled = await bank.enrolled(owner, {from: owner});
     assert.equal(ownerEnrolled, false, 'only enrolled users should be marked enrolled');
-  });
+    });
 
-  it("should deposit correct amount", async () => {
+    it("should deposit correct amount", async () => {
     const bank = await SimpleBank.deployed();
 
     await bank.enroll({from: alice});
@@ -46,12 +46,12 @@ contract('SimpleBank', function(accounts) {
 
     assert.equal(expectedEventResult.accountAddress, logAccountAddress, "LogDepositMade event accountAddress property not emitted, check deposit method");
     assert.equal(expectedEventResult.amount, logDepositAmount, "LogDepositMade event amount property not emitted, check deposit method");
-  });
+    });
 
-  it("should withdraw correct amount", async () => {
+    it("should withdraw correct amount", async () => {
     const bank = await SimpleBank.deployed();
     const initialAmount = 0;
-   
+
 	var result = await bank.withdraw(deposit, {from: alice});
     const balance = await bank.balance({from: alice});
 
@@ -68,5 +68,5 @@ contract('SimpleBank', function(accounts) {
     assert.equal(expectedEventResult.newBalance, newBalance, "LogWithdrawal event newBalance property not emitted, check deposit method");
     assert.equal(expectedEventResult.withdrawAmount, withdrawAmount, "LogWithdrawal event withdrawalAmount property not emitted, check deposit method");
 
-  });
+    });
 });
