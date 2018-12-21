@@ -70,7 +70,7 @@ contract SimpleBank {
     function deposit() payable public returns (uint) {
         /* Add the amount to the user's balance, call the event associated with a deposit,
             then return the balance of the user */
-        require(enrolled[msg.sender], "");
+        require(enrolled[msg.sender], "Caller is not enrolled in the bank");
         balances[msg.sender] += msg.value;
         emit LogDepositMade(msg.sender, msg.value);
         return balances[msg.sender];
@@ -86,7 +86,7 @@ contract SimpleBank {
             Subtract the amount from the sender's balance, and try to send that amount of ether
             to the user attempting to withdraw.
             return the user's balance.*/
-        require(enrolled[msg.sender], "");
+        require(enrolled[msg.sender], "Caller is not enrolled in the bank");
         require(balances[msg.sender] >= withdrawAmount, "Insufficient Funds");
         balances[msg.sender] -= withdrawAmount;
         msg.sender.transfer(withdrawAmount);
